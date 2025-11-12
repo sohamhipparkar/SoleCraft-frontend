@@ -26,9 +26,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
-// Configure axios base URL
-const API_BASE_URL = 'https://sole-craft-backend.vercel.app';
-axios.defaults.baseURL = API_BASE_URL;
 
 // Add token to requests if available
 axios.interceptors.request.use(
