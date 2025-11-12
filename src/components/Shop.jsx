@@ -94,9 +94,7 @@ export default function ShoeShopComponent() {
       if (filterOptions.priceRange[0] > 0) params.minPrice = filterOptions.priceRange[0];
       if (filterOptions.priceRange[1] < 200) params.maxPrice = filterOptions.priceRange[1];
 
-      const response = await axios.get('/api/products', { 
-        params
-      });
+      const response = await axios.get('/api/products', { params });
 
       if (response.data.success) {
         setProducts(response.data.products || []);
@@ -243,7 +241,7 @@ export default function ShoeShopComponent() {
         quantity: 1,
         size: product.sizes?.[0] || '',
         color: product.colors?.[0] || ''
-      }, { timeout: 5000 });
+      });
 
       if (response.data.success) {
         await fetchCart();
