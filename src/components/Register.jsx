@@ -12,7 +12,9 @@ import {
   Phone,
   Sparkles,
   Shield,
-  Zap
+  Zap,
+  Check,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
@@ -33,9 +35,59 @@ export default function Register() {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: '', color: '' });
   
   const navigate = useNavigate();
 
+  // Password strength calculation
+  const calculatePasswordStrength = (pass) => {
+    let score = 0;
+    const checks = {
+      length: pass.length >= 8,
+      lowercase: /[a-z]/.test(pass),
+      uppercase: /[A-Z]/.test(pass),
+      number: /[0-9]/.test(pass),
+      special: /[^A-Za-z0-9]/.test(pass)
+    };
+
+    // Calculate score
+    if (checks.length) score += 20;
+    if (checks.lowercase) score += 20;
+    if (checks.uppercase) score += 20;
+    if (checks.number) score += 20;
+    if (checks.special) score += 20;
+
+    // Determine strength level
+    let text = '';
+    let color = '';
+    if (score === 0) {
+      text = '';
+      color = '';
+    } else if (score <= 40) {
+      text = 'Weak';
+      color = 'from-red-500 to-red-600';
+    } else if (score <= 60) {
+      text = 'Fair';
+      color = 'from-orange-500 to-orange-600';
+    } else if (score <= 80) {
+      text = 'Good';
+      color = 'from-yellow-500 to-yellow-600';
+    } else {
+      text = 'Strong';
+      color = 'from-green-500 to-green-600';
+    }
+
+    return { score, text, color, checks };
+  };
+
+  // Update password strength when password changes
+  useEffect(() => {
+    if (password) {
+      setPasswordStrength(calculatePasswordStrength(password));
+    } else {
+      setPasswordStrength({ score: 0, text: '', color: '' });
+    }
+  }, [password]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -515,7 +567,7 @@ export default function Register() {
                         </motion.div>
                       </motion.div>
 
-                      {/* Password input */}
+                      {/* Password input with strength indicator */}
                       <motion.div variants={itemVariants}>
                         <label className="block text-gray-300 text-sm font-medium mb-2">
                           Password
@@ -556,6 +608,102 @@ export default function Register() {
                             </motion.button>
                           </div>
                         </motion.div>
+
+                        {/* Password Strength Indicator */}
+                        <AnimatePresence>
+                          {password && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="mt-3 space-y-2"
+                            >
+                              {/* Strength Bar */}
+                              <div className="flex items-center space-x-2">
+                                <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                  <motion.div
+                                    className={`h-full bg-gradient-to-r ${passwordStrength.color}`}
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${passwordStrength.score}%` }}
+                                    transition={{ duration: 0.3 }}
+                                  />
+                                </div>
+                                {passwordStrength.text && (
+                                  <motion.span
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`text-xs font-semibold bg-gradient-to-r ${passwordStrength.color} bg-clip-text text-transparent`}
+                                  >
+                                    {passwordStrength.text}
+                                  </motion.span>
+                                )}
+                              </div>
+
+                              {/* Password Requirements Checklist */}
+                              <motion.div
+                                className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-gray-900/30 rounded-lg border border-gray-700/30"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                              >
+                                {[
+                                  {
+                                    key: 'length',
+                                    text: '8+ characters'
+                                  },
+                                  {
+                                    key: 'lowercase',
+                                    text: 'Lowercase letter'
+                                  },
+                                  {
+                                    key: 'uppercase',
+                                    text: 'Uppercase letter'
+                                  },
+                                  {
+                                    key: 'number',
+                                    text: 'Number'
+                                  },
+                                  {
+                                    key: 'special',
+                                    text: 'Special character'
+                                  },
+                                ].map((requirement, index) => {
+                                  const checks = passwordStrength.checks || {};
+                                  const isValid = checks[requirement.key];
+                                  return (
+                                    <motion.div
+                                      key={requirement.key}
+                                      className="flex items-center space-x-2"
+                                      initial={{ opacity: 0, x: -10 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: index * 0.05 }}
+                                    >
+                                      <motion.div
+                                        animate={{
+                                          scale: isValid ? [1, 1.2, 1] : 1,
+                                        }}
+                                        transition={{ duration: 0.3 }}
+                                      >
+                                        {isValid ? (
+                                          <Check className="w-4 h-4 text-green-400" />
+                                        ) : (
+                                          <X className="w-4 h-4 text-gray-500" />
+                                        )}
+                                      </motion.div>
+                                      <span
+                                        className={`text-xs ${
+                                          isValid ? 'text-green-400' : 'text-gray-500'
+                                        }`}
+                                      >
+                                        {requirement.text}
+                                      </span>
+                                    </motion.div>
+                                  );
+                                })}
+                              </motion.div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </motion.div>
 
                       {/* Terms checkbox */}
