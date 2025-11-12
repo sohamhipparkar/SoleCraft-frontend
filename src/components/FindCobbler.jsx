@@ -24,28 +24,10 @@ import {
   Mail,
   Loader
 } from 'lucide-react';
-import axios from 'axios';
+import axios, { API_BASE_URL } from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-
-// Configure axios base URL (use Vite env var when available)
-const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || 'https://sole-craft-backend.vercel.app';
-axios.defaults.baseURL = API_BASE_URL;
-
-// Add token to requests if available
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 const containerStyle = {
   width: '100%',

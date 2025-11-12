@@ -19,7 +19,7 @@ import {
   Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 // Configure axios base URL (use Vite env var when available)
@@ -38,6 +38,7 @@ export default function EnhancedLoginPage() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [searchParams] = useSearchParams();
   
   const navigate = useNavigate();
 
@@ -65,6 +66,13 @@ export default function EnhancedLoginPage() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error === 'session_expired') {
+      setError('Your session has expired. Please login again.');
+    }
+  }, [searchParams]);
 
   const verifyToken = async (token) => {
     try {

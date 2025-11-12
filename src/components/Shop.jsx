@@ -1,28 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Heart, Star, Filter, ChevronDown, Search, ShoppingCart, Tag, ChevronRight, Package, TrendingUp, Users, Clock, Check, X, ArrowRight, Zap, Shield, RefreshCw, Loader } from 'lucide-react';
+import axios, { API_BASE_URL } from '../utils/axiosConfig';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import axios from 'axios';
-
-// Configure axios
-const API_BASE_URL = 'https://sole-craft-backend.vercel.app';
-axios.defaults.baseURL = API_BASE_URL;
-
-// Add token to requests if available
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 const containerVariants = {
   hidden: { opacity: 0 },
