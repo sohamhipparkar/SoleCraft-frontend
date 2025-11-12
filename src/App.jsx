@@ -1,6 +1,5 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider, Outlet} from "react-router-dom";
-import { SpeedInsights } from '@vercel/speed-insights'; 
 import { Analytics } from '@vercel/analytics/react'
 import Dashboard from "./components/Dashboard";
 import Exchange from "./components/Exchange";
@@ -145,7 +144,6 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <>
-      <SpeedInsights />
       <Analytics />
       <RouterProvider router={router} />
     </>
